@@ -1,5 +1,9 @@
+#version 330 core
+out vec4 FragColor;
 
-int main()
+in vec4 textureColor;
+
+void main()
 {
-    
+    FragColor = textureColor;
 }
