@@ -10,7 +10,10 @@
 #include <stdio.h>
 
 
+ShaderLoader shader;
+
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
+void processInput(GLFWwindow* window);
 
 int main()
 {
@@ -43,10 +46,11 @@ int main()
 
     //We only need to use Squares for this Project, single primitive
     float vertices[] =  {
-        0.5f, 0.5f, 0.0f,               //top right
-        0.5f, -0.5f, 0.0f,              //bottom right
-        -0.5f, -0.5f, 0.0f,             //bottom left
-        -0.5f, 0.5f, 0.0f               //top left
+        //Vertices              //Color
+        0.1f, 0.1f, 0.0f,       1.0f, 0.0f, 0.0f,        //top right
+        0.1f, -0.1f, 0.0f,      1.0f, 0.0f, 0.0f,        //bottom right
+        -0.1f, -0.1f, 0.0f,     1.0f, 0.0f, 0.0f,        //bottom left
+        -0.1f, 0.1f, 0.0f,      1.0f, 0.0f, 0.0f         //top left
     };
 
     unsigned int indices[] = {
@@ -54,6 +58,7 @@ int main()
         1, 2, 3         //Second Triangle
     };
 
+    shader.Init("..\\code\\shader.vs", "..\\code\\shader.fs");
 
     //set up our vertex buffers
     unsigned int VBO, VAO, EBO;
@@ -73,8 +78,11 @@ int main()
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0,3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0,3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
+
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3*sizeof(float)));
+    glEnableVertexAttribArray(1);
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
@@ -82,9 +90,24 @@ int main()
     //Now that we have setup our Vertices, start our main loop.
     while(!glfwWindowShouldClose(window))
     {
+        processInput(window);
+
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+
+        glClear(GL_COLOR_BUFFER_BIT);
         
+        shader.use();
+
+        glBindVertexArray(VAO);
+
+        glDrawElements(GL_TRIANGLES,6, GL_UNSIGNED_INT, 0);
+
+        glfwSwapBuffers(window);
+        glfwPollEvents();
     }
 
+    glfwTerminate();
+    return 0;
 
 
 }
@@ -100,31 +123,6 @@ void processInput(GLFWwindow* window)
     if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
     {
         glfwSetWindowShouldClose(window,true);
-    }
-
-    if(glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
-    {
-        yOffset += 0.005f;
-        shader.setUniFloat("yOffset", yOffset);
-    }
-
-    if(glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
-    {
-        
-        yOffset -= 0.005f;
-        shader.setUniFloat("yOffset", yOffset);
-    }
-
-    if(glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
-    {
-        xOffset -= 0.005f;
-        shader.setUniFloat("xOffset", xOffset);
-    }
-
-    if(glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
-    {
-        xOffset += 0.005f;
-        shader.setUniFloat("xOffset", xOffset);
     }
 }
 
