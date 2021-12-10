@@ -10,8 +10,6 @@
 #include <stdio.h>
 
 
-ShaderLoader shader;
-
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
 
@@ -30,7 +28,7 @@ int main()
 
     //glfw window creation
     // ------------------
-    GLFWwindow* window = glfwCreateWindow(600,600, "Snake", 0,0);
+    GLFWwindow* window = glfwCreateWindow(1500,1500, "Snake", 0,0);
 
     if(!window)
     {
@@ -48,70 +46,12 @@ int main()
         return -1;
     }
 
-    //We only need to use Squares for this Project, single primitive
-    float vertices[] =  {
-        //Vertices              //Color
-        0.1f, 0.1f, 0.0f,       1.0f, 0.0f, 0.0f,        //top right
-        0.1f, -0.1f, 0.0f,      1.0f, 0.0f, 0.0f,        //bottom right
-        -0.1f, -0.1f, 0.0f,     1.0f, 0.0f, 0.0f,        //bottom left
-        -0.1f, 0.1f, 0.0f,      1.0f, 0.0f, 0.0f         //top left
-    };
 
-    unsigned int indices[] = {
-        0, 1, 3,        //First Triangle
-        1, 2, 3         //Second Triangle
-    };
-
-    shader.Init("..\\code\\shader.vs", "..\\code\\shader.fs");
-
-    //set up our vertex buffers
-    unsigned int VBO, VAO, EBO;
-
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
-    glGenBuffers(1, &EBO);
-
-
-    glBindVertexArray(VAO);
-
-    //Create our buffer on the GPU and Send our vertices to it.
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices,  GL_STATIC_DRAW);
-
-    //Create our buffer on the GPU and send our indices to it.
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
-    glVertexAttribPointer(0,3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3*sizeof(float)));
-    glEnableVertexAttribArray(1);
-
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
+    //    
+    //glBindBuffer(GL_ARRAY_BUFFER, 0);
+    //glBindVertexArray(0);
 
     SnakeMainLoop(window);
-
-    //Now that we have setup our Vertices, start our main loop.
-    /*while(!glfwWindowShouldClose(window))
-    {
-        processInput(window);
-
-        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-
-        glClear(GL_COLOR_BUFFER_BIT);
-        
-        shader.use();
-
-        glBindVertexArray(VAO);
-
-        glDrawElements(GL_TRIANGLES,6, GL_UNSIGNED_INT, 0);
-
-        glfwSwapBuffers(window);
-        glfwPollEvents();
-    }
-    */
 
     glfwTerminate();
     return 0;
@@ -121,7 +61,27 @@ int main()
 
 void RenderEntities(snake_game_state* gameState)
 {
-    gameState->
+    //First Clear the Background to black
+
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    //Now Draw our snake
+    SnakeEntity* snake = gameState->snake;
+
+    snake->_shader->use();
+    glBindVertexArray(snake->VAO);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT,0);
+
+    snake->_shader->setUniFloat("xOffset", snake->_head->xOffset);
+    snake->_shader->setUniFloat("yOffset", snake->_head->yOffset);
+
+    glfwSwapBuffers(gameState->window);
+
+    
+    glfwPollEvents();
+
 
 }
 
@@ -143,27 +103,52 @@ void ProcessInput(snake_game_state* gameState)
 
     if(glfwGetKey(gameState->window, GLFW_KEY_UP) == GLFW_PRESS)
     {
-        yOffset += 0.05f;
-        shader.setUniFloat("yOffset", yOffset);
+        gameState->snake->_direction = UP;
     }
 
     if(glfwGetKey(gameState->window, GLFW_KEY_DOWN) == GLFW_PRESS)
     {
-        yOffset -= 0.05f;
-        shader.setUniFloat("yOffset", yOffset);
+        gameState->snake->_direction = DOWN;
     }
 
     if(glfwGetKey(gameState->window, GLFW_KEY_LEFT) == GLFW_PRESS)
     {
-        xOffset -= 0.05f;
-        shader.setUniFloat("xOffset", xOffset);
+        gameState->snake->_direction = LEFT;
     }
 
     if(glfwGetKey(gameState->window, GLFW_KEY_RIGHT) == GLFW_PRESS)
     {
-        xOffset += 0.05f;
-        shader.setUniFloat("xOffset", xOffset);
+        gameState->snake->_direction = RIGHT;
     }
+}
+
+int CreateVertexArrayObject(float* vertices, int verticesSize, unsigned int* indices, int indicesSize)
+{
+    //set up our vertex buffers
+    unsigned int VBO, VAO, EBO;
+
+    glGenVertexArrays(1, &VAO);
+    glGenBuffers(1, &VBO);
+    glGenBuffers(1, &EBO);
+
+
+    glBindVertexArray(VAO);
+
+    //Create our buffer on the GPU and Send our vertices to it.
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, verticesSize, vertices,  GL_STATIC_DRAW);
+
+    //Create our buffer on the GPU and send our indices to it.
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicesSize, indices, GL_STATIC_DRAW);
+
+    glVertexAttribPointer(0,3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3*sizeof(float)));
+    glEnableVertexAttribArray(1);
+
+    return VAO;
 }
 
 #endif
