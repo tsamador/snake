@@ -4,5 +4,6 @@
 #include "snake.h";
 
 void ProcessInput(snake_game_state* gameState);
+void RenderEntities(snake_game_state* gameState);
 
 #endif

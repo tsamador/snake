@@ -91,7 +91,7 @@ int main()
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 
-    SnakeMainLoop();
+    SnakeMainLoop(window);
 
     //Now that we have setup our Vertices, start our main loop.
     /*while(!glfwWindowShouldClose(window))
@@ -121,7 +121,8 @@ int main()
 
 void RenderEntities(snake_game_state* gameState)
 {
-    if()
+    gameState->
+
 }
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
@@ -130,32 +131,35 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 }
 
 //TODO(Tanner): Move this to a separate file
-void ProcessInput(snake_game_sate* gameState)
+void ProcessInput(snake_game_state* gameState)
 {
-    if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+    
+    gameState->inputs = {};
+    
+    if(glfwGetKey(gameState->window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
     {
-        glfwSetWindowShouldClose(window,true);
+        gameState->active = false;
     }
 
-    if(glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+    if(glfwGetKey(gameState->window, GLFW_KEY_UP) == GLFW_PRESS)
     {
         yOffset += 0.05f;
         shader.setUniFloat("yOffset", yOffset);
     }
 
-    if(glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+    if(glfwGetKey(gameState->window, GLFW_KEY_DOWN) == GLFW_PRESS)
     {
         yOffset -= 0.05f;
         shader.setUniFloat("yOffset", yOffset);
     }
 
-    if(glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+    if(glfwGetKey(gameState->window, GLFW_KEY_LEFT) == GLFW_PRESS)
     {
         xOffset -= 0.05f;
         shader.setUniFloat("xOffset", xOffset);
     }
 
-    if(glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+    if(glfwGetKey(gameState->window, GLFW_KEY_RIGHT) == GLFW_PRESS)
     {
         xOffset += 0.05f;
         shader.setUniFloat("xOffset", xOffset);

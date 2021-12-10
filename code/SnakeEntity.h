@@ -1,6 +1,8 @@
 #ifndef DEF_SNAKE_ENTITY_H
 #define DEF_SNAKE_ENTITY_H
 
+#include "ShaderLoader.h"
+
 enum Direction {
     LEFT,
     UP,
@@ -12,9 +14,6 @@ struct SnakeEntity {
 
    ShaderLoader* shader;
    Direction direction;
-    
-
-
-}
+};
 
 #endif

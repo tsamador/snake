@@ -5,14 +5,6 @@
 #include "..\lib\glad\glad.h"           //NOTE(Tanner): Have to include Glad first as it has the openGL include headers
 #include "..\lib\GLFW\glfw3.h"
 
-struct snake_game_state {
-    bool active;
-    GLFWwindow* window;
-    snake_inputs inputs;
-
-    //TODO(Tanner): Add entities
-
-};
 
 struct snake_inputs {
     bool up;
@@ -21,8 +13,21 @@ struct snake_inputs {
     bool right;
 };
 
+struct snake_game_state {
+    bool active;
+    GLFWwindow* window;
+    snake_inputs inputs;
+    ShaderLoader* shader;
+
+    //TODO(Tanner): Add entities
+
+};
+
+
+
 void SnakeMainLoop(GLFWwindow* window);
-void InitGameState(sanke_game_state* gameState);
+void InitGameState(snake_game_state* gameState, GLFWwindow* window);
+void UpdateEntities(snake_game_state* gameState);
 
 
 
