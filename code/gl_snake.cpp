@@ -15,6 +15,10 @@ ShaderLoader shader;
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
 
+float xOffset = 0.0f;
+float yOffset = 0.0f;
+
+
 int main()
 {
     // Initialize and Configure glfw
@@ -26,7 +30,7 @@ int main()
 
     //glfw window creation
     // ------------------
-    GLFWwindow* window = glfwCreateWindow(800,600, "Snake", 0,0);
+    GLFWwindow* window = glfwCreateWindow(600,600, "Snake", 0,0);
 
     if(!window)
     {
@@ -87,8 +91,10 @@ int main()
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 
+    SnakeMainLoop();
+
     //Now that we have setup our Vertices, start our main loop.
-    while(!glfwWindowShouldClose(window))
+    /*while(!glfwWindowShouldClose(window))
     {
         processInput(window);
 
@@ -105,6 +111,7 @@ int main()
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
+    */
 
     glfwTerminate();
     return 0;
@@ -112,17 +119,46 @@ int main()
 
 }
 
+void RenderEntities(snake_game_state* gameState)
+{
+    if()
+}
+
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
     glViewport(0,0,width,height);
 }
 
-
-void processInput(GLFWwindow* window)
+//TODO(Tanner): Move this to a separate file
+void ProcessInput(snake_game_sate* gameState)
 {
     if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
     {
         glfwSetWindowShouldClose(window,true);
+    }
+
+    if(glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+    {
+        yOffset += 0.05f;
+        shader.setUniFloat("yOffset", yOffset);
+    }
+
+    if(glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+    {
+        yOffset -= 0.05f;
+        shader.setUniFloat("yOffset", yOffset);
+    }
+
+    if(glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+    {
+        xOffset -= 0.05f;
+        shader.setUniFloat("xOffset", xOffset);
+    }
+
+    if(glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+    {
+        xOffset += 0.05f;
+        shader.setUniFloat("xOffset", xOffset);
     }
 }
 
