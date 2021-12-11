@@ -2,6 +2,8 @@
 #define DEF_SNAKE_ENTITY_H
 
 #include "ShaderLoader.h"
+#include "FoodEntity.h"
+#include <math.h>
 
 enum Direction {
     LEFT,
@@ -24,11 +26,12 @@ struct SnakeEntity {
    Direction _direction;
    snake_node* _head;
    snake_node* _tail;
+   float radius;
    int VAO;
 
-   SnakeEntity(ShaderLoader* shader ) {
-       _shader = shader;
+   SnakeEntity() {
        _head = (snake_node*)malloc(sizeof(snake_node));
+       radius = 0.02f;
        _head->xOffset = 0.0f;
        _head->yOffset = 0.0f;
    }
@@ -66,6 +69,24 @@ struct SnakeEntity {
                    _head->yOffset -= 0.001f;
                }
            }
+       }
+   }    
+
+   bool CheckCollision(FoodEntity* food)
+   {
+       float distance = sqrt(pow(food->xOffset - _head->xOffset, 2) + pow(food->yOffset - _head->yOffset, 2));
+       //If our boxes overlap
+       if(distance < (radius + food->radius))
+       {
+           //TODO(Tanner): Add a link to the tail
+
+           //TODO(Tanner): Increment the length;
+
+           return true;
+       }
+       else
+       {
+           return false;
        }
    }
 
