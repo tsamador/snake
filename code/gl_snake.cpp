@@ -1,13 +1,7 @@
 #ifndef GL_SNAKE_DEF
 #define GL_SNAKE_DEF
 
-
-#include "..\lib\glad\glad.h"           //NOTE(Tanner): Have to include Glad first as it has the openGL include headers
-#include "..\lib\GLFW\glfw3.h"
-#include "ShaderLoader.h"
-#include "stb_image.h"
-#include "snake.h"
-#include <stdio.h>
+#include "gl_snake.h"
 
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -71,15 +65,32 @@ void RenderEntities(snake_game_state* gameState)
     SnakeEntity* snake = gameState->snake;
 
     snake->_shader->use();
+    //Bind Vertext Array
     glBindVertexArray(snake->VAO);
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT,0);
-
+    
+    //Set Uniforms
     snake->_shader->setUniFloat("xOffset", snake->_head->xOffset);
     snake->_shader->setUniFloat("yOffset", snake->_head->yOffset);
 
-    glfwSwapBuffers(gameState->window);
+    //Draw Elements
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT,0);
 
     
+    //Now Draw our Food item
+    
+    FoodEntity* food = gameState->food;
+
+    food->_shader->use();
+
+    glBindVertexArray(food->VAO);
+
+    food->_shader->setUniFloat("xOffset", food->xOffset);
+    food->_shader->setUniFloat("yOffset", food->yOffset);
+
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+    
+    glfwSwapBuffers(gameState->window);
+
     glfwPollEvents();
 
 
