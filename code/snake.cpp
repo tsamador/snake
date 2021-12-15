@@ -52,6 +52,7 @@ void UpdateEntities(snake_game_state* gameState)
     gameState->snake->Update();
 
     bool result = gameState->snake->CheckCollision(gameState->food);
+    
     gameState->food->update(result);
 }
 
