@@ -65,15 +65,20 @@ void RenderEntities(snake_game_state* gameState)
     SnakeEntity* snake = gameState->snake;
 
     snake->_shader->use();
-    //Bind Vertext Array
+    //Bind Vertex Array
     glBindVertexArray(snake->VAO);
     
+    snake_node** segments = snake->segments;
     //Set Uniforms
-    snake->_shader->setUniFloat("xOffset", snake->_head->xOffset);
-    snake->_shader->setUniFloat("yOffset", snake->_head->yOffset);
+    for(int i = 0; i < snake->length; i++)
+    {
+        snake->_shader->setUniFloat("xOffset", segments[i]->xOffset);
+        snake->_shader->setUniFloat("yOffset", segments[i]->yOffset);
+        //Draw Elements
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT,0);
+    }
 
-    //Draw Elements
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT,0);
+    
 
     
     //Now Draw our Food item
@@ -114,22 +119,22 @@ void ProcessInput(snake_game_state* gameState)
 
     if(glfwGetKey(gameState->window, GLFW_KEY_UP) == GLFW_PRESS)
     {
-        gameState->snake->_direction = UP;
+        gameState->snake->SetDirection(UP);
     }
 
     if(glfwGetKey(gameState->window, GLFW_KEY_DOWN) == GLFW_PRESS)
     {
-        gameState->snake->_direction = DOWN;
+        gameState->snake->SetDirection(DOWN);
     }
 
     if(glfwGetKey(gameState->window, GLFW_KEY_LEFT) == GLFW_PRESS)
     {
-        gameState->snake->_direction = LEFT;
+        gameState->snake->SetDirection(LEFT);
     }
 
     if(glfwGetKey(gameState->window, GLFW_KEY_RIGHT) == GLFW_PRESS)
     {
-        gameState->snake->_direction = RIGHT;
+        gameState->snake->SetDirection(RIGHT);
     }
 }
 

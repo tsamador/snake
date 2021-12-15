@@ -7,3 +7,4 @@ build/.vs/gl_snake/v16/.suo
 *.db-wal
 *.db-shm
 build
+.vscode

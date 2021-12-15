@@ -40,7 +40,7 @@ struct FoodEntity {
     float GenerateRandomFloat()
     {
         //NOTE(Tanner): Not Entirely sure this will work 
-        float x = (float)rand()/(float)(RAND_MAX/1.8f);
+        float x = (float)rand()/(float)(RAND_MAX/1.6f);
         return x-1;
     }
 };

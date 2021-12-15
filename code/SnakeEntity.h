@@ -15,71 +15,82 @@ enum Direction {
 struct snake_node {
     float xOffset;
     float yOffset;
+    Direction direction;
     snake_node* next;
 };
-
 
 
 struct SnakeEntity {
 
    ShaderLoader* _shader;
-   Direction _direction;
-   snake_node* _head;
-   snake_node* _tail;
+   snake_node** segments;
    float radius;
    int VAO;
+   int length;
 
    SnakeEntity() {
-       _head = (snake_node*)malloc(sizeof(snake_node));
+       segments = (snake_node**)malloc(sizeof(snake_node*)*50);
+       segments[0] = (snake_node*)malloc(sizeof(snake_node));
+       segments[0]->yOffset = 0.0f;
+       segments[0]->xOffset = 0.0f;
+       segments[0]->direction = RIGHT;
        radius = 0.02f;
-       _head->xOffset = 0.0f;
-       _head->yOffset = 0.0f;
+       length = 1;
    }
 
    void SetDirection(Direction d) 
    {
-       _direction = d;
+       segments[0]->direction = d;
    }
 
    void Update() 
    {
-       switch(_direction) 
+    
+       for(int i = length - 1; i >=0; i--)
        {
-           case LEFT: 
-           {
-               if(_head->xOffset > -0.95f) {
-                    _head->xOffset -= 0.001f;
-               }
-           } break;
-           case UP: 
-           {
-               if(_head->yOffset < 0.95f) {
-                    _head->yOffset += 0.001f;
-               }
-           } break;
-           case RIGHT: 
-           {
-               if(_head->xOffset < 0.95f) {
-                    _head->xOffset += 0.001f;
-               }
-           } break;
-           case DOWN:
-           {
-               if(_head->yOffset > -0.95f) {
-                   _head->yOffset -= 0.001f;
-               }
-           }
+        switch(segments[i]->direction) 
+        {
+            case LEFT: 
+            {
+               if(segments[i]->xOffset > -0.95f) {
+                    segments[i]->xOffset -= 0.001f;
+                }
+            } break;
+            case UP: 
+            {
+                if(segments[i]->yOffset < 0.95f) {
+                    segments[i]->yOffset += 0.001f;
+                }
+            } break;
+            case RIGHT: 
+            {
+                if(segments[i]->xOffset < 0.95f) {
+                    segments[i]->xOffset += 0.001f;
+                }
+            } break;
+            case DOWN:
+            {
+                if(segments[i]->yOffset > -0.95f) {
+                    segments[i]->yOffset -= 0.001f;
+                }
+            } break;
+        }
+        if(i >0) {
+            segments[i]->direction = segments[i-1]->direction;
+        }
        }
-   }    
+       
+   }  
+
 
    bool CheckCollision(FoodEntity* food)
    {
-       float distance = sqrt(pow(food->xOffset - _head->xOffset, 2) + pow(food->yOffset - _head->yOffset, 2));
+       float distance = sqrt(pow(food->xOffset - segments[0]->xOffset, 2) + pow(food->yOffset - segments[0]->yOffset, 2));
        //If our boxes overlap
        if(distance < (radius + food->radius))
        {
            //TODO(Tanner): Add a link to the tail
-
+            AddSegment();
            //TODO(Tanner): Increment the length;
 
            return true;
@@ -88,6 +99,38 @@ struct SnakeEntity {
        {
            return false;
        }
+   }
+
+   void AddSegment()
+   {
+       //TODO(Tanner): Change this to use my own MemoryManager
+        segments[length] = (snake_node*)malloc(sizeof(snake_node));
+        
+        segments[length]->xOffset = segments[length-1]->xOffset;
+        segments[length]->yOffset = segments[length-1]->yOffset;
+        segments[length]->direction = segments[length-1]->direction;
+
+        switch(segments[length-1]->direction)
+        {
+            case LEFT:
+            {
+                segments[length]->xOffset -= .05f;
+            } break;
+            case UP:
+            {
+                segments[length]->yOffset -= .05f;
+            } break;
+            case RIGHT:
+            {
+                segments[length]->xOffset += .05f;
+            } break;
+            case DOWN:
+            {
+                segments[length]->yOffset += .05f;
+            } break;
+        }
+        length++;
+
    }
 
 
