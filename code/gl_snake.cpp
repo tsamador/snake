@@ -1,6 +1,8 @@
 #ifndef GL_SNAKE_DEF
 #define GL_SNAKE_DEF
 
+
+
 #include "gl_snake.h"
 
 
@@ -53,7 +55,7 @@ int main()
 
 }
 
-void RenderEntities(snake_game_state* gameState)
+void RenderEntities(snake_game_state* gameState, tile tileMap[TABLESIZE][TABLESIZE])
 {
     //First Clear the Background to black
 
@@ -72,8 +74,9 @@ void RenderEntities(snake_game_state* gameState)
     //Set Uniforms
     for(int i = 0; i < snake->length; i++)
     {
-        snake->_shader->setUniFloat("xOffset", segments[i]->xOffset);
-        snake->_shader->setUniFloat("yOffset", segments[i]->yOffset);
+        tile foodTile = tileMap[segments[i]->yCoord][segments[i]->xCoord];
+        snake->_shader->setUniFloat("xOffset", foodTile.xOffset);
+        snake->_shader->setUniFloat("yOffset", foodTile.yOffset);
         //Draw Elements
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT,0);
     }
@@ -88,9 +91,9 @@ void RenderEntities(snake_game_state* gameState)
     food->_shader->use();
 
     glBindVertexArray(food->VAO);
-
-    food->_shader->setUniFloat("xOffset", food->xOffset);
-    food->_shader->setUniFloat("yOffset", food->yOffset);
+    tile foodTile = tileMap[food->xCoord][food->yCoord];
+    food->_shader->setUniFloat("xOffset", foodTile.xOffset);
+    food->_shader->setUniFloat("yOffset", foodTile.yOffset);
 
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     
@@ -104,6 +107,8 @@ void RenderEntities(snake_game_state* gameState)
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
     glViewport(0,0,width,height);
+
+    //TODO(Tanner): Maybe update our table offsets here???
 }
 
 //TODO(Tanner): Move this to a separate file

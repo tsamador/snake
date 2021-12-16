@@ -9,18 +9,16 @@
 
 
 struct FoodEntity {
-    float xOffset;
-    float yOffset;
-    float radius;
+    int xCoord;
+    int yCoord;
     ShaderLoader* _shader;
     int VAO;
 
     FoodEntity()
     {
         srand(time(0));
-        radius = 0.02f;
-        xOffset = GenerateRandomFloat();
-        yOffset = GenerateRandomFloat();
+        xCoord = rand() % TABLESIZE;
+        yCoord = rand() % TABLESIZE;
     }
 
     void update(bool result)
@@ -33,16 +31,10 @@ struct FoodEntity {
 
     void Spawn()
     {
-        xOffset = GenerateRandomFloat();
-        yOffset = GenerateRandomFloat();
+        xCoord = rand() % TABLESIZE;
+        yCoord = rand() % TABLESIZE;
     }
 
-    float GenerateRandomFloat()
-    {
-        //NOTE(Tanner): Not Entirely sure this will work 
-        float x = (float)rand()/(float)(RAND_MAX/1.6f);
-        return x-1;
-    }
 };
 
 #endif

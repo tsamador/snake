@@ -7,7 +7,11 @@
 #include "SnakeEntity.h"
 #include "FoodEntity.h"
 
-
+struct tile 
+{
+    float xOffset;
+    float yOffset;
+};
 
 
 struct snake_inputs {
