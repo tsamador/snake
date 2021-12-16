@@ -1,7 +1,12 @@
 #include "snake.h"
+#include <Windows.h>
+#include <time.h>
+
 
 
 ShaderLoader shader;
+const long int msPerFrame = 100; //Shooting for 10 frames a second
+tile tileMap[TABLESIZE][TABLESIZE];
 //Our main Game loop
 // TODO(Tanner): I don't really like passing in the GL window here,
 // May want to eventually change that
@@ -9,7 +14,7 @@ void SnakeMainLoop(GLFWwindow* window)
 {
     //Initialize our gameState;
     snake_game_state* gameState = InitGameState(window);
-
+    //TODO(Tanner): Enforce 10 frames per second
     while(gameState->active)
     {
         //Process Input
@@ -19,7 +24,9 @@ void SnakeMainLoop(GLFWwindow* window)
         UpdateEntities(gameState);
 
         //Render
-        RenderEntities(gameState);
+        //TODO(Tanner): Enforce a framerate
+        RenderEntities(gameState, tileMap);
+        Sleep(50);
     }
 
 }
@@ -36,7 +43,23 @@ snake_game_state* InitGameState(GLFWwindow* window)
     //Clear inputs
     gameState->inputs = {};
 
+    //Setup our tilemap
+    //I have coordinates from -0.95 to 0.95
+    // 1.9/15 = 0.125 x
 
+    float startingxOffset = -0.9f;
+    float startingyOffset = 0.9f;
+    for(int row = 0; row < TABLESIZE; row++)
+    {
+        startingxOffset = -0.9f;
+        for(int col = 0; col < TABLESIZE; col++)
+        {
+            tileMap[row][col].xOffset = startingxOffset;
+            tileMap[row][col].yOffset = startingyOffset;
+            startingxOffset += 0.095f;
+        }
+        startingyOffset -= 0.095f;
+    }
 
     gameState->snake = CreateSnake(); 
 
