@@ -3,6 +3,7 @@
 
 #include <stdlib.h>
 #include <ctime>
+#include "SnakeEntity.h"
 
 
 //Generate a float between -0.95 and 0.95 
@@ -21,7 +22,7 @@ struct FoodEntity {
         yCoord = rand() % TABLESIZE;
     }
 
-    void update(bool result)
+    void Update(bool result)
     {
         if(result)
         {
@@ -31,9 +32,12 @@ struct FoodEntity {
 
     void Spawn()
     {
+        //TODO(Tanner): Ensure respawn is not on top of snake
         xCoord = rand() % TABLESIZE;
         yCoord = rand() % TABLESIZE;
     }
+
+    
 
 };
 

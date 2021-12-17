@@ -6,7 +6,7 @@
 #include "ShaderLoader.h"
 #include "FoodEntity.h"
 #include <math.h>
-
+const int STARTSIZE = 5;
 enum Direction {
     LEFT,
     UP,
@@ -30,16 +30,29 @@ struct SnakeEntity {
 
    SnakeEntity() {
        segments = (snake_node**)malloc(sizeof(snake_node*)*50);
-       segments[0] = (snake_node*)malloc(sizeof(snake_node));
-       segments[0]->yCoord = 7;
-       segments[0]->xCoord = 7;
-       segments[0]->direction = RIGHT;
-       length = 1;
+       for(int i = 0; i < STARTSIZE; i++ )
+       {
+            segments[i] = (snake_node*)malloc(sizeof(snake_node));
+            segments[i]->yCoord = 7;
+            segments[i]->xCoord = 7 - i;
+            segments[i]->direction = RIGHT;
+       }
+       
+       length = STARTSIZE;
    }
 
    void SetDirection(Direction d) 
    {
-       segments[0]->direction = d;
+       Direction currDir = segments[0]->direction;
+       if(  !(currDir == RIGHT && d == LEFT) &&
+            !(currDir == UP && d == DOWN)  &&
+            !(currDir == LEFT && d == RIGHT) &&
+            !(currDir == DOWN && d == UP)
+         )
+        {
+            segments[0]->direction = d;
+        }
+       
    }
 
    void Update() 
@@ -56,9 +69,14 @@ struct SnakeEntity {
            //TODO(Tanner): Do I want to lose if i hit the edge, or wrap???
            case LEFT:
            {
+               
                if(segments[0]->xCoord > 0)
                {
                    segments[0]->xCoord--;
+               }
+               else
+               {
+                   segments[0]->xCoord = TABLESIZE-1;
                }
            } break;
            case UP:
@@ -67,6 +85,10 @@ struct SnakeEntity {
                {
                    segments[0]->yCoord--;
                }
+               else
+               {
+                   segments[0]->yCoord = TABLESIZE-1;
+               }
            } break;
            case RIGHT:
            {
@@ -74,12 +96,20 @@ struct SnakeEntity {
                {
                    segments[0]->xCoord++;
                }
+               else
+               {
+                   segments[0]->xCoord = 0;
+               }
            } break;
            case DOWN:
            {
                if(segments[0]->yCoord < TABLESIZE - 1)
                {
                    segments[0]->yCoord++;
+               }
+               else
+               {
+                   segments[0]->yCoord = 0;
                }
            } break;
 
@@ -90,40 +120,49 @@ struct SnakeEntity {
 
    bool CheckCollision(FoodEntity* food)
    {
-       return false;
+        if(segments[0]->xCoord == food->xCoord &&
+           segments[0]->yCoord == food->yCoord)
+        {
+            AddSegment();
+            return true;
+        }
+        else
+        {
+            return false;
+        }
    }
 
    void AddSegment()
    {
-       /*
+       
        //TODO(Tanner): Change this to use my own MemoryManager
         segments[length] = (snake_node*)malloc(sizeof(snake_node));
         
-        segments[length]->xOffset = segments[length-1]->xOffset;
-        segments[length]->yOffset = segments[length-1]->yOffset;
+        segments[length]->xCoord = segments[length-1]->xCoord;
+        segments[length]->yCoord = segments[length-1]->yCoord;
         segments[length]->direction = segments[length-1]->direction;
 
         switch(segments[length-1]->direction)
         {
             case LEFT:
             {
-                segments[length]->xOffset -= .05f;
+                segments[length]->xCoord -= 1;
             } break;
             case UP:
             {
-                segments[length]->yOffset -= .05f;
+                segments[length]->yCoord -= 1 ;
             } break;
             case RIGHT:
             {
-                segments[length]->xOffset += .05f;
+                segments[length]->xCoord += 1;
             } break;
             case DOWN:
             {
-                segments[length]->yOffset += .05f;
+                segments[length]->yCoord += 1;
             } break;
         }
         length++;
-*/
+        
    }
 
 

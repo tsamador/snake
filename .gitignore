@@ -8,3 +8,5 @@ build/.vs/gl_snake/v16/.suo
 *.db-shm
 build
 .vscode
+*.exe
+*.obj
