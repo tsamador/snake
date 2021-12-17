@@ -24,7 +24,7 @@ int main()
 
     //glfw window creation
     // ------------------
-    GLFWwindow* window = glfwCreateWindow(1500,1500, "Snake", 0,0);
+    GLFWwindow* window = glfwCreateWindow(1200,800, "Snake", 0,0);
 
     if(!window)
     {
@@ -91,7 +91,7 @@ void RenderEntities(snake_game_state* gameState, tile tileMap[TABLESIZE][TABLESI
     food->_shader->use();
 
     glBindVertexArray(food->VAO);
-    tile foodTile = tileMap[food->xCoord][food->yCoord];
+    tile foodTile = tileMap[food->yCoord][food->xCoord];
     food->_shader->setUniFloat("xOffset", foodTile.xOffset);
     food->_shader->setUniFloat("yOffset", foodTile.yOffset);
 
