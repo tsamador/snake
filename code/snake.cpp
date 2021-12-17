@@ -76,22 +76,23 @@ void UpdateEntities(snake_game_state* gameState)
 
     bool result = gameState->snake->CheckCollision(gameState->food);
     
-    gameState->food->update(result);
+    gameState->food->Update(result);
 }
 
-
+ 
 SnakeEntity* CreateSnake()
 {
     //for this project we just have a default shader.
     SnakeEntity* snake = new SnakeEntity();
 
     // Snake is just a list of red squares
+    float size = 0.0425f;
     float vertices[] =  {
-        //Vertices              //Color - All read
-        0.02f, 0.02f, 0.0f,       1.0f, 0.0f, 0.0f,        //top right
-        0.02f, -0.02f, 0.0f,      1.0f, 0.0f, 0.0f,        //bottom right
-        -0.02f, -0.02f, 0.0f,     1.0f, 0.0f, 0.0f,        //bottom left
-        -0.02f, 0.02f, 0.0f,      1.0f, 0.0f, 0.0f         //top left
+        //Vertices              //Color - All green
+        size, size, 0.0f,       0.0f, 1.0f, 0.0f,        //top right
+        size, -size, 0.0f,      0.0f, 1.0f, 0.0f,        //bottom right
+        -size, -size, 0.0f,     0.0f, 1.0f, 0.0f,        //bottom left
+        -size, size, 0.0f,      0.0f, 1.0f, 0.0f         //top left
     };
 
     int verticesSize = sizeof(vertices);
@@ -114,13 +115,13 @@ FoodEntity* CreateFood()
 {
     //For this project we just ahve a default shader.
     FoodEntity* food = new FoodEntity();
-
+    float size = 0.0425f;
     float vertices[] =  {
-        //Vertices              //Color - All white
-        0.02f, 0.02f, 0.0f,       1.0f, 1.0f, 1.0f,        //top right
-        0.02f, -0.02f, 0.0f,      1.0f, 1.0f, 1.0f,        //bottom right
-        -0.02f, -0.02f, 0.0f,     1.0f, 1.0f, 1.0f,        //bottom left
-        -0.02f, 0.02f, 0.0f,      1.0f, 1.0f, 1.0f         //top left
+        //Vertices              //Color - All red
+        size, size, 0.0f,       1.0f, 0.0f, 0.0f,        //top right
+        size, -size, 0.0f,      1.0f, 0.0f, 0.0f,        //bottom right
+        -size, -size, 0.0f,     1.0f, 0.0f, 0.0f,        //bottom left
+        -size, size, 0.0f,      1.0f, 0.0f, 0.0f         //top left
     };
 
     int verticesSize = sizeof(vertices);
