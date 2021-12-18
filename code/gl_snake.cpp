@@ -57,6 +57,18 @@ int main()
 
 void RenderEntities(snake_game_state* gameState, tile tileMap[TABLESIZE][TABLESIZE])
 {
+
+#if SNAKE_DEBUG
+    /*
+    GLint64 startTime;
+    glGetInteger64v(GL_TIMESTAMP, &startTime);
+    */
+    GLuint query;
+    GLuint64 elapsedTime;
+    int done = 0;
+    glGenQueries(1, &query);
+    glBeginQuery(GL_TIME_ELAPSED,query);
+#endif
     //First Clear the Background to black
 
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -81,9 +93,6 @@ void RenderEntities(snake_game_state* gameState, tile tileMap[TABLESIZE][TABLESI
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT,0);
     }
 
-    
-
-    
     //Now Draw our Food item
     
     FoodEntity* food = gameState->food;
@@ -103,13 +112,31 @@ void RenderEntities(snake_game_state* gameState, tile tileMap[TABLESIZE][TABLESI
 
     glFinish();
 
+#if SNAKE_DEBUG
+    glEndQuery(GL_TIME_ELAPSED); 
+
+    while (!done) {
+        glGetQueryObjectiv(query, 
+            GL_QUERY_RESULT_AVAILABLE, 
+            &done);
+    }
+    // get the query result
+    glGetQueryObjectui64v(query, GL_QUERY_RESULT, &elapsedTime);
+    printf("GPU Time Elapsed: %f ms\n", elapsedTime / 1000000.0);
+    /*
+    GLint64 endTime;
+    glGetInteger64v(GL_TIMESTAMP, &endTime);
+    printf("Time to render:  %f\n", (endTime - startTime)/1000000.0);
+    */
+#endif
+
 }
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
     glViewport(0,0,width,height);
 
-    //TODO(Tanner): Maybe update our table offsets here???
+    
 }
 
 //TODO(Tanner): Move this to a separate file

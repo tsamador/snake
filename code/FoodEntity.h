@@ -3,6 +3,7 @@
 
 #include <stdlib.h>
 #include <ctime>
+#include "SnakeNode.h"
 #include "SnakeEntity.h"
 
 
@@ -22,19 +23,33 @@ struct FoodEntity {
         yCoord = rand() % TABLESIZE;
     }
 
-    void Update(bool result)
+    void Update(bool result, snake_node** segments, int snakeLength)
     {
         if(result)
         {
-            Spawn();
+            Spawn(segments, snakeLength);
         }
     }
 
-    void Spawn()
+    void Spawn(snake_node** segments, int snakeLength)
     {
         //TODO(Tanner): Ensure respawn is not on top of snake
-        xCoord = rand() % TABLESIZE;
-        yCoord = rand() % TABLESIZE;
+        bool colliding;
+        do
+        {
+            xCoord = rand() % TABLESIZE;
+            yCoord = rand() % TABLESIZE;
+            colliding = false;
+            for(int i = 0; i < snakeLength; i++)
+            {
+                if(xCoord == segments[i]->xCoord && yCoord == segments[i]->yCoord)
+                {
+                    colliding = true;
+                }
+            }
+
+        }while(colliding);
+
     }
 
     
