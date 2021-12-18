@@ -101,6 +101,7 @@ void RenderEntities(snake_game_state* gameState, tile tileMap[TABLESIZE][TABLESI
 
     glfwPollEvents();
 
+    glFinish();
 
 }
 
