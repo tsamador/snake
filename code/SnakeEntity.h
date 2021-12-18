@@ -4,22 +4,10 @@
 
 
 #include "ShaderLoader.h"
+#include "SnakeNode.h"
 #include "FoodEntity.h"
 #include <math.h>
 const int STARTSIZE = 5;
-enum Direction {
-    LEFT,
-    UP,
-    RIGHT,
-    DOWN
-};
-
-struct snake_node {
-    int xCoord;
-    int yCoord;
-    Direction direction;
-};
-
 
 struct SnakeEntity {
 

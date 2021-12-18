@@ -1,7 +1,7 @@
 #include "snake.h"
 
 ShaderLoader shader;
-const int targetFPS = 20;
+const int targetFPS = 10;
 const int MS_PER_SECOND = 1000;
 const long int msPerFrame = MS_PER_SECOND/targetFPS; //Shooting for 10 frames a second
 
@@ -29,12 +29,15 @@ void SnakeMainLoop(GLFWwindow* window)
     //Initialize our gameState;
     snake_game_state* gameState = InitGameState(window);
     
+#if SNAKE_DEBUG
     u64 startFrame, endTime , deltaFrame;
     u64 perfFrequency = GetPerfFrequency();
+    startFrame = GetWallClock();
+#endif
     //TODO(Tanner): Enforce 10 frames per second
     while(gameState->active)
     {
-        startFrame = GetWallClock();
+        
         //Process Input
         ProcessInput(gameState);
 
@@ -52,10 +55,14 @@ void SnakeMainLoop(GLFWwindow* window)
             Sleep(msPerFrame - timeElapsed);
         }
 
+#if SNAKE_DEBUG
         deltaFrame = GetWallClock() - startFrame;
         timeElapsed = deltaFrame/(perfFrequency/MS_PER_SECOND);
         f64 FPS = (f64)perfFrequency/deltaFrame;
-        printf("Time Between: %d FPS: %f \n", timeElapsed, FPS);
+        printf("Main Loop Time elapsed: %d\nFPS: %f \n", timeElapsed, FPS);
+        startFrame = GetWallClock();
+#endif
+
     }
 
 }
@@ -112,7 +119,7 @@ void UpdateEntities(snake_game_state* gameState)
 
     
     bool result = gameState->snake->CheckCollision(gameState->food);
-    gameState->food->Update(result);
+    gameState->food->Update(result, gameState->snake->segments, gameState->snake->length);
 }
 
  
