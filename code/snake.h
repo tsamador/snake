@@ -10,8 +10,12 @@
 #include "ShaderLoader.h"
 #include "SnakeEntity.h"
 #include "FoodEntity.h"
+#include "SnakeTypes.h"
+#include <Windows.h>
+#include <time.h>
 
-
+//TODO(Tanner): Remove this
+#include <stdio.h>
 
 void SnakeMainLoop(GLFWwindow* window);
 snake_game_state* InitGameState( GLFWwindow* window);

@@ -132,6 +132,22 @@ struct SnakeEntity {
         }
    }
 
+   bool CheckLoss()
+   {
+       snake_node* head = segments[0];
+
+        for(int i = 1; i < length; i++)
+        {
+            if(head->xCoord == segments[i]->xCoord &&
+                head->yCoord == segments[i]->yCoord)
+            {
+                return true;
+            }
+        }
+
+        return false;
+   }
+
    void AddSegment()
    {
        

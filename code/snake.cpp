@@ -1,12 +1,26 @@
 #include "snake.h"
-#include <Windows.h>
-#include <time.h>
-
-
 
 ShaderLoader shader;
-const long int msPerFrame = 100; //Shooting for 10 frames a second
+const int targetFPS = 20;
+const int MS_PER_SECOND = 1000;
+const long int msPerFrame = MS_PER_SECOND/targetFPS; //Shooting for 10 frames a second
+
 tile tileMap[TABLESIZE][TABLESIZE];
+
+static inline u64 GetPerfFrequency()
+{
+    LARGE_INTEGER frequency;
+    QueryPerformanceFrequency(&frequency);
+    return frequency.QuadPart;
+}
+
+static inline u64 GetWallClock()
+{
+    LARGE_INTEGER wallClock;
+    QueryPerformanceCounter(&wallClock);
+    return wallClock.QuadPart;
+}
+
 //Our main Game loop
 // TODO(Tanner): I don't really like passing in the GL window here,
 // May want to eventually change that
@@ -14,9 +28,13 @@ void SnakeMainLoop(GLFWwindow* window)
 {
     //Initialize our gameState;
     snake_game_state* gameState = InitGameState(window);
+    
+    u64 startFrame, endTime , deltaFrame;
+    u64 perfFrequency = GetPerfFrequency();
     //TODO(Tanner): Enforce 10 frames per second
     while(gameState->active)
     {
+        startFrame = GetWallClock();
         //Process Input
         ProcessInput(gameState);
 
@@ -24,12 +42,24 @@ void SnakeMainLoop(GLFWwindow* window)
         UpdateEntities(gameState);
 
         //Render
-        //TODO(Tanner): Enforce a framerate
         RenderEntities(gameState, tileMap);
-        Sleep(50);
+
+        deltaFrame = GetWallClock() - startFrame;
+        u64 timeElapsed = deltaFrame/(perfFrequency/MS_PER_SECOND);
+
+        if(timeElapsed < msPerFrame)
+        {
+            Sleep(msPerFrame - timeElapsed);
+        }
+
+        deltaFrame = GetWallClock() - startFrame;
+        timeElapsed = deltaFrame/(perfFrequency/MS_PER_SECOND);
+        f64 FPS = (f64)perfFrequency/deltaFrame;
+        printf("Time Between: %d FPS: %f \n", timeElapsed, FPS);
     }
 
 }
+
 
 snake_game_state* InitGameState(GLFWwindow* window)
 {
@@ -73,9 +103,15 @@ void UpdateEntities(snake_game_state* gameState)
 {
     //Update our snake entity   
     gameState->snake->Update();
+    if(gameState->snake->CheckLoss())
+    {
+        //NOTE(Tanner): maybe instead of exiting the window reset the game????
+        gameState->active = false;
 
-    bool result = gameState->snake->CheckCollision(gameState->food);
+    }
+
     
+    bool result = gameState->snake->CheckCollision(gameState->food);
     gameState->food->Update(result);
 }
 
